@@ -1,10 +1,12 @@
 export default {
-  search_first_line: "Search for monument or place",
+  navbar_map: "Map",
+  search_first_line: "Search for institution or place",
   search_placeholder: "empire state building, church birmingham, sydney",
   search_data_disclaimer: "Data provided by Wikidata, may be incomplete",
   welcome: "Welcome",
-  monument_general_data: "General data",
-  monument_address_details: "Address details",
-  monument_technical_details: "Technical details",
-  monument_heritage: "Heritage"
+  institution_general_data: "General data",
+  institution_address_details: "Address details",
+  institution_contact_details: "Contact details",
+  institution_social_media: "Social media",
+  institution_details: "Details"
 };

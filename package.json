@@ -21,6 +21,7 @@
     "nuxt": "^2.0.0",
     "nuxt-i18n": "^5.12.7",
     "nuxt-leaflet": "^0.0.19",
+    "vue-bootstrap-typeahead": "^0.2.6",
     "vue-content-placeholders": "^0.2.1",
     "wikidata-sdk": "^7.0.7"
   },

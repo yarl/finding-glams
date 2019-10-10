@@ -4,7 +4,7 @@
       class="d-flex flex-column justify-content-center align-items-center hero"
       :class="{ 'hero--short': !search.isPristine }"
     >
-      <img class="hero__logo" src="~assets/wlm-logo.png" alt="Wiki Loves Monuments logo" />
+      <h1 class="my-0">Finding GLAMs</h1>
       <div class="hero__search">
         <Search />
       </div>
@@ -32,7 +32,7 @@
               <div class="card-body">
                 <h5 class="card-title">
                   <nuxt-link
-                    :to="localePath({ name: 'monument-id', params: { id: result.title } })"
+                    :to="localePath({ name: 'institution-id', params: { id: result.title } })"
                   >
                     <span v-html="result.titlesnippet"></span>
                   </nuxt-link>
@@ -116,7 +116,7 @@ export default {
   width: 100vw;
   height: 100%;
   opacity: 0.5;
-  background: linear-gradient(135deg, #c4c5a6 10%, #900 75%);
+  background: linear-gradient(135deg, #c4c5a6 10%, #009966 75%);
 }
 
 .hero__logo {

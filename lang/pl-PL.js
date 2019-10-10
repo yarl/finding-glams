@@ -1,10 +1,12 @@
 export default {
-  search_first_line: "Szukaj zabytku lub miejscowości",
+  navbar_map: "Mapa",
+  search_first_line: "Szukaj instytucji lub miejscowości",
   search_placeholder: "hala stulecia, poznań kościół, katowice",
   search_data_disclaimer: "Dane z projektu Wikidane, mogą być niekompletne",
   welcome: "Witaj",
-  monument_general_data: "Dane ogólne",
-  monument_address_details: "Dane adresowe",
-  monument_technical_details: "Dane techniczne",
-  monument_heritage: "Dane zabytkowe"
+  institution_general_data: "Dane ogólne",
+  institution_address_details: "Dane adresowe",
+  institution_contact_details: "Dane kontaktowe",
+  institution_social_media: "Media społecznościowe",
+  institution_details: "Więcej informacji"
 };

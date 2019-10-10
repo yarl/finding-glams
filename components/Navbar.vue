@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light container">
-    <nuxt-link class="navbar-brand" :to="localePath('index')">Wiki Loves Monuments</nuxt-link>
+    <nuxt-link class="navbar-brand" :to="localePath('index')">Finding GLAMs</nuxt-link>
     <button
       class="navbar-toggler"
       type="button"
@@ -16,7 +16,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav flex-fill">
         <li class="nav-item mr-auto">
-          <nuxt-link class="nav-link" :to="localePath('map')">Map</nuxt-link>
+          <nuxt-link class="nav-link" :to="localePath('map')">{{$t('navbar_map')}}</nuxt-link>
         </li>
 
         <li class="d-flex align-items-center nav-item">

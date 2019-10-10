@@ -27,7 +27,14 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ["~/plugins/vue-content-placeholders"],
+  plugins: [
+    "~/plugins/global.js",
+    "~/plugins/vue-content-placeholders",
+    {
+      src: "~/plugins/vue-bootstrap-typeahead.js",
+      ssr: false
+    }
+  ],
   /*
    ** Nuxt.js modules
    */
