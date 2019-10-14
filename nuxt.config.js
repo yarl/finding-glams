@@ -1,6 +1,13 @@
 export default {
   mode: "universal",
   /*
+   ** Detect host ip dynamically, listen at port 3000
+  */
+  server: {
+    port: 3000,
+    host: "0.0.0.0",
+  },
+  /*
    ** Headers of the page
    */
   head: {
