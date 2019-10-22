@@ -10,7 +10,9 @@
       </div>
     </div>
     <div class="container mt-5">
-      <div v-if="search.isPristine">Pusto</div>
+      <div
+        v-if="search.isPristine"
+      >Wikimedia Sverige (Sweden), UNESCO and the Wikimedia Foundation are working to build a truly worldwide database of cultural heritage institutions and their collections on Wikipedia, the largest and most popular educational site in the world. We will empower cultural organisations to share their knowledge and content with the world through collaboration, training, documentation and case studies. The project will lay the groundwork for long term and sustainable collaboration between cultural organisations and the Wikimedia movement (the organisations behind Wikipedia and other free educational websites).</div>
       <div v-else>
         <div v-if="!search.isBusy">
           <h3>
@@ -58,24 +60,37 @@ import Search from "~/components/Search.vue";
 
 import { mapState } from "vuex";
 
-export default {
-  components: {
-    Logo,
-    Search
-  },
-  methods: {
-    getProperty(id, property) {
-      // console.log("getProperty", id, property);
-      const entity = this.$store.state.data.entities[id];
+const components = {
+  Logo,
+  Search
+};
 
-      if (!entity || !entity.claims[property]) return false;
-      // console.log(wdk.simplify.claim(entity.claims[property][0]));
-      return wdk.simplify.claim(entity.claims[property][0]);
-    }
-  },
-  computed: {
-    ...mapState(["search"])
+const computed = {
+  ...mapState(["search"])
+};
+
+function head() {
+  return {
+    title: "FindingGLAMs"
+  };
+}
+
+const methods = {
+  getProperty(id, property) {
+    // console.log("getProperty", id, property);
+    const entity = this.$store.state.data.entities[id];
+
+    if (!entity || !entity.claims[property]) return false;
+    // console.log(wdk.simplify.claim(entity.claims[property][0]));
+    return wdk.simplify.claim(entity.claims[property][0]);
   }
+};
+
+export default {
+  components,
+  computed,
+  head,
+  methods
 };
 </script>
 

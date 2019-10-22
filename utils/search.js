@@ -27,7 +27,7 @@ export function fullSearch(query = "", lang = "") {
   });
 }
 
-export function fetchEntities(ids = []) {
+export async function fetchEntities(ids = []) {
   const requestsNumber = Math.ceil(ids.length / 50);
 
   const urls = new Array(requestsNumber).fill().map((value, index) => {

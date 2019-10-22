@@ -23,7 +23,7 @@
       ></Value>
     </div>
 
-    <div v-if="edit.isEdit">
+    <div v-if="edit.isEdit && editable">
       <vue-bootstrap-typeahead
         class="mb-4"
         v-model="query"
@@ -47,97 +47,108 @@
 <script>
 import { mapState } from "vuex";
 
-export default {
-  props: ["property", "value", "link"],
-  data() {
-    return {
-      query: "",
-      selectedUser: null,
-      users: []
-    };
-  },
-  computed: {
-    valueName() {
-      if (!this.value || !this.value.type) {
-        return "";
-      }
-      const lang = this.$i18n.locale;
-
-      if (this.value.type === "monolingualtext") {
-        const value = this.value.value;
-        return `${value.text} (${value.language})`;
-      }
-
-      if (this.value.type === "string") {
-        const value = this.value.value;
-        return value;
-      }
-
-      if (this.value.type === "time") {
-        const value = this.value.value;
-        return value;
-      }
-
-      if (this.value.type === "globe-coordinate") {
-        const value = this.value.value.join(" ");
-        return value;
-      }
-
-      if (this.value.type === "wikibase-item") {
-        const entity = this.$store.state.data.entities[this.value.value];
-        if (!entity) {
-          return undefined;
-        }
-
-        const label = entity.labels[lang] || {};
-        const engLabel = entity.labels.en || {};
-
-        return label.value || engLabel.value || "?";
-      }
-
-      if (this.value.type === "url") {
-        const value = this.value.value;
-        return value.includes("mailto:") ? value.substring(7) : value;
-      }
-
-      if (this.value.type === "quantity") {
-        return this.value.value.amount;
-      }
-
-      if (this.value.type === "external-id") {
-        const prefixes = {
-          P2013: "https://www.facebook.com/",
-          P2003: "https://www.instagram.com/",
-          P2002: "https://twitter.com/"
-        };
-        return `${prefixes[this.property]}${this.value.value}`;
-      }
-
-      return this.value;
-    },
-    hasQualifiers() {
-      if (!this.value || !this.value.qualifiers) {
-        return false;
-      }
-      return Object.keys(this.value.qualifiers).length;
-    },
-    ...mapState(["edit"])
-  },
-  watch: {
-    // When the query value changes, fetch new results from
-    // the API - in practice this action should be debounced
-    query(newQuery) {
-      axios
-        .get(`https://api.github.com/search/users?q=${newQuery}`)
-        .then(res => {
-          this.users = res.data.items;
-        });
+const computed = {
+  valueName() {
+    if (!this.value || !this.value.type) {
+      return "";
     }
-  },
-  filters: {
-    stringify(value) {
-      return JSON.stringify(value, null, 2);
+    const lang = this.$i18n.locale;
+
+    if (this.value.type === "monolingualtext") {
+      const value = this.value.value;
+      return `${value.text} (${value.language})`;
     }
+
+    if (this.value.type === "string") {
+      const value = this.value.value;
+      return value;
+    }
+
+    if (this.value.type === "time") {
+      const value = this.value.value;
+      return value;
+    }
+
+    if (this.value.type === "globe-coordinate") {
+      const value = this.value.value.join(" ");
+      return value;
+    }
+
+    if (this.value.type === "wikibase-item") {
+      const entity = this.$store.state.data.entities[this.value.value];
+      if (!entity) {
+        return undefined;
+      }
+
+      const label = entity.labels[lang] || {};
+      const engLabel = entity.labels.en || {};
+
+      return label.value || engLabel.value || "?";
+    }
+
+    if (this.value.type === "url") {
+      const value = this.value.value;
+      return value.includes("mailto:") ? value.substring(7) : value;
+    }
+
+    if (this.value.type === "quantity") {
+      return this.value.value.amount;
+    }
+
+    if (this.value.type === "external-id") {
+      const prefixes = {
+        P2013: "https://www.facebook.com/",
+        P2003: "https://www.instagram.com/",
+        P2002: "https://twitter.com/"
+      };
+      return `${prefixes[this.property]}${this.value.value}`;
+    }
+
+    return this.value;
+  },
+  hasQualifiers() {
+    return false;
+    /*
+    if (!this.value || !this.value.qualifiers) {
+      return false;
+    }
+    return Object.keys(this.value.qualifiers).length;
+    */
+  },
+  ...mapState(["edit"])
+};
+
+function data() {
+  return {
+    query: "",
+    selectedUser: null,
+    users: []
+  };
+}
+
+const filters = {
+  stringify(value) {
+    return JSON.stringify(value, null, 2);
   }
+};
+
+const props = ["property", "value", "link", "editable"];
+
+const watch = {
+  // When the query value changes, fetch new results from
+  // the API - in practice this action should be debounced
+  query(newQuery) {
+    axios.get(`https://api.github.com/search/users?q=${newQuery}`).then(res => {
+      this.users = res.data.items;
+    });
+  }
+};
+
+export default {
+  computed,
+  data,
+  filters,
+  props,
+  watch
 };
 </script>

@@ -1,6 +1,5 @@
-import { simplify } from "wikidata-sdk";
-
 import { fetchEntities } from "~/utils/search";
+import { getIDsList } from "~/utils/utils";
 
 export const state = () => ({
   entities: {}
@@ -12,39 +11,34 @@ export const mutations = {
       ...state.entities,
       ...entities
     };
+  },
+  CHANGE_ENTITY(state, { id, changes }) {
+    state.entities[id] = {
+      ...state.entities[id],
+      ...changes
+    };
   }
 };
 
 export const actions = {
-  addEntitiesById({ state, commit, dispatch }, ids = []) {
+  async addEntitiesById({ state, commit, dispatch }, ids = []) {
     const list = ids.filter(item => !state.entities[item]); // get only missing ones
-    fetchEntities(list).then(response => {
-      commit("ADD_ENTITIES", response.data.entities);
+    const response = await fetchEntities(list);
+    commit("ADD_ENTITIES", response.data.entities);
+  },
+  async addEntityById({ commit, dispatch }, id = "") {
+    const response = await fetchEntities([id]);
+    const entity = response.data.entities[id];
+
+    commit("ADD_ENTITIES", {
+      [entity.id]: {
+        ...entity,
+        deep: false
+      }
     });
   },
-  addEntityById({ commit, dispatch }, id = "") {
-    fetchEntities([id]).then(response => {
-      dispatch("data/addEntity", response.data.entities[id]);
-      // commit("ADD_ENTITIES", response.data.entities);
-      // console.log(response.data.entities[id]);
-    });
-  },
-  addEntity({ state, commit, dispatch }, entity = {}) {
-    const entities = { [entity.id]: entity };
-    commit("ADD_ENTITIES", entities);
-    dispatch("addEntitiesById", getIDsList(entity));
+  async addEntityDeep({ state, commit, dispatch }, entity = {}) {
+    await dispatch("addEntitiesById", getIDsList(entity));
+    commit("CHANGE_ENTITY", { id: entity.id, changes: { deep: true } });
   }
 };
-
-export function getIDsList(entity = {}) {
-  const { claims = [] } = simplify.entity(entity, { keepTypes: true });
-  const ids = [];
-
-  Object.values(claims).forEach(values =>
-    values
-      .filter(value => value.type === "wikibase-item")
-      .forEach(value => ids.push(value.value))
-  );
-
-  return [...Object.keys(claims), ...ids];
-}

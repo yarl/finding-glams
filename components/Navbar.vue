@@ -32,12 +32,19 @@
 </template>
 
 <script>
-export default {
-  computed: {
-    availableLocales() {
-      return this.$i18n.locales.filter(i => i.code);
-    }
+const computed = {
+  availableLocales() {
+    return this.$i18n.locales.filter(i => i.code);
   }
+};
+
+function mounted() {
+  this.$store.dispatch("edit/checkLogin");
+}
+
+export default {
+  computed,
+  mounted
 };
 </script>
 
