@@ -23,7 +23,7 @@
       ></Value>
     </div>
     <div class="col-md-6 property__value--no-data" v-else>
-      <em>no data</em>
+      <Value :value="{}" :property="prop" :link="link" :editable="editable"></Value>
     </div>
   </div>
 </template>

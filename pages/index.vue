@@ -9,7 +9,7 @@
         <Search />
       </div>
     </div>
-    <div class="container mt-5">
+    <div class="container my-5">
       <div
         v-if="search.isPristine"
       >Wikimedia Sverige (Sweden), UNESCO and the Wikimedia Foundation are working to build a truly worldwide database of cultural heritage institutions and their collections on Wikipedia, the largest and most popular educational site in the world. We will empower cultural organisations to share their knowledge and content with the world through collaboration, training, documentation and case studies. The project will lay the groundwork for long term and sustainable collaboration between cultural organisations and the Wikimedia movement (the organisations behind Wikipedia and other free educational websites).</div>

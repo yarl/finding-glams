@@ -6,7 +6,7 @@ export const state = () => ({
     isBusy: false
   },
   isEdit: false,
-  edits: []
+  edits: {}
 });
 
 export const mutations = {
@@ -21,7 +21,20 @@ export const mutations = {
   },
   EDIT_OFF(state) {
     state.isEdit = false;
-  }
+  },
+  EDIT_ADD_CHANGE(state, data) {
+    state.edits = {
+      ...state.edits,
+      [data.pageId]: {
+        ...state.edits[data.pageId],
+        [data.claimId]: {
+          value: data.value,
+          source: data.source
+        }
+      }
+    };
+  },
+  EDIT_ADD_NEW(state, data) {}
 };
 
 export const actions = {
@@ -40,5 +53,24 @@ export const actions = {
   },
   toggleEdit({ state, commit, dispatch }) {
     commit(state.isEdit ? "EDIT_OFF" : "EDIT_ON");
+  },
+  addEdit({ state, commit }, data) {
+    const { pageId, claimId, property, value, source } = data;
+    if (!pageId || !value) return;
+
+    commit(claimId ? "EDIT_ADD_CHANGE" : "EDIT_ADD_NEW", data);
   }
 };
+
+/* 
+save: 
+
+action: wbcreateclaim
+entity: Q24944689
+format: json
+property: P2013
+snaktype: value
+summary: #monumental
+use_auth: true
+value: "starymlyn.zarki"
+*/

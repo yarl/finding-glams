@@ -2,13 +2,16 @@
   <div class="my-4 container institution">
     <div v-if="monument">
       <h1>{{ label }}</h1>
-      <h4>
+      <h4 class="d-flex flex-row">
         <a :href="`https://www.wikidata.org/wiki/${id}`" target="_blank">{{ id }}</a>
+        <button class="ml-auto btn btn-link d-flex" @click="toggleEdit()">
+          <i class="material-icons">create</i>
+          <span class="ml-2">{{ edit.isEdit ? 'Cancel' : 'Edit' }}</span>
+        </button>
       </h4>
       <div class="d-none">
         <MainImage :id="id" prop="P18"></MainImage>
       </div>
-      <button @click="toggleEdit()">edit {{ edit.isEdit }}</button>
       <div class="mt-4 institution__details">
         <h4 class="mt-4">{{$t('institution_general_data')}}</h4>
         <Property :id="id" prop="P31" :mandatory="true"></Property>
@@ -119,43 +122,12 @@ const methods = {
   })
 };
 
-async function mounted() {
-  /*
-  const { id } = this;
-  const store = this.$store;
-  const isPropList = false;
-  const isEntity = store.state.data.entities[id];
-
-  if (!isPropList) {
-    await store.dispatch("data/addEntitiesById", propList);
-  }
-  if (!isEntity) {
-    console.log(id, isEntity);
-    await store.dispatch("data/addEntityById", id);
-  }
-
-  const entity = this.$store.state.data.entities[this.id];
-  // this.$store.dispatch("data/addEntitiesById", propList);
-
-  if (!entity && !this.asyncData) {
-    this.$store.dispatch("data/addEntityById", this.id);
-    this.$store.dispatch("data/addEntitiesById", ["P6375"]);
-  } else if (!entity && this.asyncData) {
-    this.$store.dispatch("data/addEntity", this.asyncData);
-    this.$store.dispatch("data/addEntitiesById", ["P6375"]);
-  } else {
-    this.$store.dispatch("data/addEntity", entity);
-  }
-  */
-}
-
 export default {
   asyncData,
   components,
   computed,
   head,
   methods
-  // mounted
 };
 </script>
 

@@ -9,7 +9,10 @@ body {
 
 a,
 a:hover,
-a:active {
+a:active,
+.btn-link,
+.btn-link:hover,
+.btn-link:active {
   color: #096;
 }
 

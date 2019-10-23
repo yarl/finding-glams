@@ -1,7 +1,7 @@
 export default {
   navbar_map: "Mapa",
   search_first_line: "Szukaj instytucji lub miejscowości",
-  search_placeholder: "hala stulecia, poznań kościół, katowice",
+  search_placeholder: "muzeum narodowe, biblioteka w katowicach",
   search_data_disclaimer: "Dane z projektu Wikidane, mogą być niekompletne",
   welcome: "Witaj",
   institution_general_data: "Dane ogólne",

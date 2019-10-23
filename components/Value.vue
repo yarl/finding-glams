@@ -1,40 +1,39 @@
 <template>
   <div class="pb-1" v-if="valueName">
-    <span v-if="value.type === 'wikibase-item'">
-      <nuxt-link
-        v-if="link"
-        :to="localePath({ name: 'institution-id', params: { id: value.value } })"
-      >{{ valueName }} ({{ value.value }})</nuxt-link>
-      <span v-else>{{ valueName }} ({{ value.value }})</span>
-    </span>
-    <span v-else-if="value.type === 'url'">
-      <a :href="value.value">{{ valueName }}</a>
-    </span>
-    <span v-else-if="value.type === 'external-id'">
-      <a :href="valueName">{{ value.value }}</a>
-    </span>
-    <span v-else>{{ valueName }}</span>
-
-    <div class="ml-2" v-if="hasQualifiers">
-      <Value
-        v-for="qualifier in Object.entries(this.value.qualifiers)"
-        :key="qualifier[0]"
-        :value="qualifier[1][0]"
-      ></Value>
+    <div class="d-flex flex-column" v-if="edit.isEdit && editable">
+      <input class="p-1 mb-1" v-model="editing.value" :placeholder="propertyName" @blur="addEdit()" />
+      <small class="pl-1 mb-2 text-muted">{{ editHint }}</small>
+      <input
+        class="p-1"
+        type="url"
+        v-model="editing.source"
+        placeholder="source URL"
+        @blur="addEdit()"
+      />
     </div>
+    <div v-else>
+      <span v-if="value.type === 'wikibase-item'">
+        <nuxt-link
+          v-if="link"
+          :to="localePath({ name: 'institution-id', params: { id: value.value } })"
+        >{{ valueName }} ({{ value.value }})</nuxt-link>
+        <span v-else>{{ valueName }} ({{ value.value }})</span>
+      </span>
+      <span v-else-if="value.type === 'url'">
+        <a :href="value.value">{{ valueName }}</a>
+      </span>
+      <span v-else-if="value.type === 'external-id'">
+        <a :href="valueUrl">{{ valueName }}</a>
+      </span>
+      <span v-else>{{ valueName }}</span>
 
-    <div v-if="edit.isEdit && editable">
-      <vue-bootstrap-typeahead
-        class="mb-4"
-        v-model="query"
-        :data="users"
-        :serializer="item => item.login"
-        @hit="selectedUser = $event"
-        placeholder="Search GitHub Users"
-      ></vue-bootstrap-typeahead>
-
-      <h3>Selected User JSON</h3>
-      <pre>{{ selectedUser | stringify }}</pre>
+      <div class="ml-2" v-if="hasQualifiers">
+        <Value
+          v-for="qualifier in Object.entries(this.value.qualifiers)"
+          :key="qualifier[0]"
+          :value="qualifier[1][0]"
+        ></Value>
+      </div>
     </div>
   </div>
   <div class="pb-1" v-else>
@@ -48,10 +47,24 @@
 import { mapState } from "vuex";
 
 const computed = {
+  propertyName() {
+    const property = this.$store.state.data.entities[this.property];
+    if (!property) {
+      return undefined;
+    }
+
+    const lang = this.$i18n.locale;
+    const label = property.labels[lang];
+    return label ? label.value : property.labels.en.value;
+  },
   valueName() {
-    if (!this.value || !this.value.type) {
+    if (!this.value) {
       return "";
     }
+    if (!this.value.type) {
+      return "–";
+    }
+
     const lang = this.$i18n.locale;
 
     if (this.value.type === "monolingualtext") {
@@ -65,6 +78,11 @@ const computed = {
     }
 
     if (this.value.type === "time") {
+      const value = this.value.value;
+      return value;
+    }
+
+    if (this.value.type === "external-id") {
       const value = this.value.value;
       return value;
     }
@@ -95,6 +113,13 @@ const computed = {
       return this.value.value.amount;
     }
 
+    return this.value;
+  },
+  valueUrl() {
+    if (!this.value || !this.value.type) {
+      return "";
+    }
+
     if (this.value.type === "external-id") {
       const prefixes = {
         P2013: "https://www.facebook.com/",
@@ -103,8 +128,9 @@ const computed = {
       };
       return `${prefixes[this.property]}${this.value.value}`;
     }
-
-    return this.value;
+  },
+  editHint() {
+    return "hint text";
   },
   hasQualifiers() {
     return false;
@@ -120,6 +146,10 @@ const computed = {
 
 function data() {
   return {
+    editing: {
+      value: "",
+      source: ""
+    },
     query: "",
     selectedUser: null,
     users: []
@@ -131,6 +161,26 @@ const filters = {
     return JSON.stringify(value, null, 2);
   }
 };
+
+const methods = {
+  addEdit() {
+    this.$store.dispatch("edit/addEdit", {
+      pageId: this.$route.params.id,
+      claimId: this.value.id,
+      property: this.property,
+      value: this.editing.value,
+      source: this.editing.source
+    });
+
+    console.log(this.value.id);
+    console.log(this.$route.params.id);
+    console.log(this.property, this.editing.value, this.editing.source);
+  }
+};
+
+function mounted() {
+  this.editing.value = this.valueName === "–" ? "" : this.valueName;
+}
 
 const props = ["property", "value", "link", "editable"];
 
@@ -148,6 +198,8 @@ export default {
   computed,
   data,
   filters,
+  methods,
+  mounted,
   props,
   watch
 };

@@ -1,7 +1,7 @@
 export default {
   navbar_map: "Map",
   search_first_line: "Search for institution or place",
-  search_placeholder: "empire state building, church birmingham, sydney",
+  search_placeholder: "louvre, smithsonian, national library",
   search_data_disclaimer: "Data provided by Wikidata, may be incomplete",
   welcome: "Welcome",
   institution_general_data: "General data",
