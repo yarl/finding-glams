@@ -1,10 +1,18 @@
 <template>
-  <div class="my-4 container institution">
+  <div class="my-4 container institution" :class="[edit.isEdit ? 'institution--editing' : '']">
     <div v-if="monument">
       <h1>{{ label }}</h1>
       <h4 class="d-flex flex-row">
-        <a :href="`https://www.wikidata.org/wiki/${id}`" target="_blank">{{ id }}</a>
-        <button class="ml-auto btn btn-link d-flex" @click="toggleEdit()">
+        <a class="mr-auto" :href="`https://www.wikidata.org/wiki/${id}`" target="_blank">{{ id }}</a>
+        <button
+          class="btn btn-link"
+          :class="[edit.isEdit ? 'd-flex' : 'd-none']"
+          @click="saveEdit()"
+        >
+          <i class="material-icons">save</i>
+          <span class="ml-2">Save ({{ edit.edits[id] && edit.edits[id].length || 0 }})</span>
+        </button>
+        <button class="btn btn-link d-flex" @click="toggleEdit()">
           <i class="material-icons">create</i>
           <span class="ml-2">{{ edit.isEdit ? 'Cancel' : 'Edit' }}</span>
         </button>
@@ -12,33 +20,41 @@
       <div class="d-none">
         <MainImage :id="id" prop="P18"></MainImage>
       </div>
+      <div>{{ edit.edits[id] && edit.edits[id].length }}</div>
+      <div>{{ edit.edits[id] }}</div>
       <div class="mt-4 institution__details">
-        <h4 class="mt-4">{{$t('institution_general_data')}}</h4>
-        <Property :id="id" prop="P31" :mandatory="true"></Property>
-        <Property :id="id" prop="P527" link="true"></Property>
-        <Property :id="id" prop="P361" link="true"></Property>
-        <Property :id="id" prop="P463" link="true"></Property>
-
-        <h4 class="mt-4">{{$t('institution_address_details')}}</h4>
-        <Property :id="id" prop="P131" :mandatory="true"></Property>
-        <Property :id="id" prop="P6375" :mandatory="true"></Property>
-        <Property :id="id" prop="P159"></Property>
-        <Property :id="id" prop="P625"></Property>
-
-        <h4 class="mt-4">{{$t('institution_contact_details')}}</h4>
-        <Property :id="id" prop="P856" :mandatory="true" :editable="true"></Property>
-        <Property :id="id" prop="P968" :mandatory="true" :editable="true"></Property>
-        <Property :id="id" prop="P1329" :mandatory="true" :editable="true"></Property>
-
-        <h4 class="mt-4">{{$t('institution_social_media')}}</h4>
-        <Property :id="id" prop="P2013" :mandatory="true" :editable="true"></Property>
-        <Property :id="id" prop="P2002" :mandatory="true" :editable="true"></Property>
-        <Property :id="id" prop="P2003" :mandatory="true" :editable="true"></Property>
-
-        <h4 class="mt-4">{{$t('institution_details')}}</h4>
-        <Property :id="id" prop="P1037"></Property>
-        <Property :id="id" prop="P1174"></Property>
-        <Property :id="id" prop="P1436"></Property>
+        <div class="px-2 institution__details__general">
+          <h4 class="mt-4">{{$t('institution_general_data')}}</h4>
+          <Property :id="id" prop="P31" :mandatory="true"></Property>
+          <Property :id="id" prop="P527" link="true"></Property>
+          <Property :id="id" prop="P361" link="true"></Property>
+          <Property :id="id" prop="P463" link="true"></Property>
+        </div>
+        <div class="px-2 institution__details__address">
+          <h4 class="mt-4">{{$t('institution_address_details')}}</h4>
+          <Property :id="id" prop="P131" :mandatory="true"></Property>
+          <Property :id="id" prop="P6375" :mandatory="true"></Property>
+          <Property :id="id" prop="P159"></Property>
+          <Property :id="id" prop="P625"></Property>
+        </div>
+        <div class="px-2 institution__details__contact">
+          <h4 class="mt-4">{{$t('institution_contact_details')}}</h4>
+          <Property :id="id" prop="P856" :mandatory="true" :editable="true"></Property>
+          <Property :id="id" prop="P968" :mandatory="true" :editable="true"></Property>
+          <Property :id="id" prop="P1329" :mandatory="true" :editable="true"></Property>
+        </div>
+        <div class="px-2 institution__details__social-media">
+          <h4 class="mt-4">{{$t('institution_social_media')}}</h4>
+          <Property :id="id" prop="P2013" :mandatory="true" :editable="true"></Property>
+          <Property :id="id" prop="P2002" :mandatory="true" :editable="true"></Property>
+          <Property :id="id" prop="P2003" :mandatory="true" :editable="true"></Property>
+        </div>
+        <div class="px-2 institution__details__details">
+          <h4 class="mt-4">{{$t('institution_details')}}</h4>
+          <Property :id="id" prop="P1037"></Property>
+          <Property :id="id" prop="P1174"></Property>
+          <Property :id="id" prop="P1436"></Property>
+        </div>
       </div>
     </div>
     <div v-else>No data</div>
@@ -118,7 +134,8 @@ function head() {
 
 const methods = {
   ...mapActions({
-    toggleEdit: "edit/toggleEdit"
+    toggleEdit: "edit/toggleEdit",
+    saveEdit: "edit/saveEdit"
   })
 };
 
@@ -132,6 +149,15 @@ export default {
 </script>
 
 <style scoped>
+.institution--editing {
+  background: #eee;
+}
+
+.institution--editing .institution__details__contact,
+.institution--editing .institution__details__social-media {
+  background: white;
+}
+
 .institution__details {
   border-top: 4px solid #096;
 }

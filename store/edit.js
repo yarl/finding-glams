@@ -23,18 +23,40 @@ export const mutations = {
     state.isEdit = false;
   },
   EDIT_ADD_CHANGE(state, data) {
+    const pageEdits = state.edits[data.pageId] || [];
+
     state.edits = {
       ...state.edits,
-      [data.pageId]: {
-        ...state.edits[data.pageId],
-        [data.claimId]: {
-          value: data.value,
-          source: data.source
-        }
-      }
+      [data.pageId]: [
+        ...pageEdits.filter(edit => edit.claimId !== data.claimId),
+        data
+      ]
     };
   },
-  EDIT_ADD_NEW(state, data) {}
+  EDIT_REMOVE_CHANGE(state, data) {
+    const pageEdits = state.edits[data.pageId] || [];
+
+    state.edits = {
+      ...state.edits,
+      [data.pageId]: pageEdits.filter(edit => edit.claimId !== data.claimId)
+    };
+  },
+  EDIT_REMOVE_CLAIM(state, data) {
+    state.edits = {
+      ...state.edits,
+      [data.pageId]: [
+        ...pageEdits.filter(edit => edit.claimId !== data.claimId),
+        data
+      ]
+    };
+  },
+  EDIT_ADD_NEW(state, data) {
+    const pageEdits = state.edits[data.pageId] || [];
+    state.edits = {
+      ...state.edits,
+      [data.pageId]: [...pageEdits, data]
+    };
+  }
 };
 
 export const actions = {
@@ -54,11 +76,34 @@ export const actions = {
   toggleEdit({ state, commit, dispatch }) {
     commit(state.isEdit ? "EDIT_OFF" : "EDIT_ON");
   },
+  saveEdit() {},
   addEdit({ state, commit }, data) {
     const { pageId, claimId, property, value, source } = data;
     if (!pageId || !value) return;
 
+    console.log("DATA", data);
     commit(claimId ? "EDIT_ADD_CHANGE" : "EDIT_ADD_NEW", data);
+  },
+  removeEdit({ state, commit }, data) {
+    const { pageId, claimId } = data;
+    if (!pageId || !claimId) return;
+
+    const pageEdits = state.edits[data.pageId] || [];
+    const editIndex = pageEdits.indexOf(
+      pageEdits.find(edit => edit.claimId === data.claimId)
+    );
+    // if it's edit, remove it
+    if (editIndex > -1) {
+      commit("EDIT_REMOVE_CHANGE", {
+        action: "",
+        ...data
+      });
+    } else {
+      commit("EDIT_REMOVE_CLAIM", {
+        action: "REMOVE",
+        ...data
+      });
+    }
   }
 };
 

@@ -1,14 +1,19 @@
 <template>
-  <div class="pb-1" v-if="valueName">
+  <div class="pb-1 value" v-if="valueName">
     <div class="d-flex flex-column" v-if="edit.isEdit && editable">
-      <input class="p-1 mb-1" v-model="editing.value" :placeholder="propertyName" @blur="addEdit()" />
+      <input
+        class="p-1 mb-1"
+        v-model="editing.value"
+        :placeholder="propertyName"
+        @blur="onValueBlur()"
+      />
       <small class="pl-1 mb-2 text-muted">{{ editHint }}</small>
       <input
         class="p-1"
         type="url"
         v-model="editing.source"
         placeholder="source URL"
-        @blur="addEdit()"
+        @blur="onValueBlur()"
       />
     </div>
     <div v-else>
@@ -163,18 +168,40 @@ const filters = {
 };
 
 const methods = {
-  addEdit() {
+  onValueBlur() {
+    const pageId = this.$route.params.id;
+    const claimId = this.value.id || `${this.property}`;
+    const isEqual = this.editing.value === this.valueName;
+
+    // value reverted to original one
+    if (
+      isEqual &&
+      this.edit.edits[pageId] &&
+      this.edit.edits[pageId].find(edit => edit.claimId === claimId)
+    ) {
+      this.$store.dispatch("edit/removeEdit", {
+        pageId,
+        claimId
+      });
+    }
+
+    // values are equal, ignore change
+    if (isEqual) {
+      return;
+    }
+
+    // value is changed
     this.$store.dispatch("edit/addEdit", {
-      pageId: this.$route.params.id,
-      claimId: this.value.id,
+      pageId,
+      claimId,
       property: this.property,
       value: this.editing.value,
       source: this.editing.source
     });
 
-    console.log(this.value.id);
+    /*     console.log(this.value.id);
     console.log(this.$route.params.id);
-    console.log(this.property, this.editing.value, this.editing.source);
+    console.log(this.property, this.editing.value, this.editing.source); */
   }
 };
 
@@ -204,3 +231,9 @@ export default {
   watch
 };
 </script>
+
+<style scoped>
+input:focus {
+  outline: 2px solid #096;
+}
+</style>
